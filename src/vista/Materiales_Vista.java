@@ -142,7 +142,12 @@ public class Materiales_Vista extends javax.swing.JFrame {
             }
         });
 
-        btnEditar.setText("Editar");
+        btnEditar.setText("Actualizar");
+        btnEditar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnEditarMouseClicked(evt);
+            }
+        });
 
         txtDuracion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -190,7 +195,7 @@ public class Materiales_Vista extends javax.swing.JFrame {
                                     .addComponent(txtDuracion)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(spnCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 38, Short.MAX_VALUE)))
+                                        .addGap(0, 15, Short.MAX_VALUE)))
                                 .addGap(19, 19, 19))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(spnCanciones, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -280,11 +285,11 @@ public class Materiales_Vista extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtPeriod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(30, 30, 30)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnMostrar)
                     .addComponent(btnInsertar)
                     .addComponent(btnBuscar)
-                    .addComponent(btnEditar)
-                    .addComponent(btnMostrar))
+                    .addComponent(btnEditar))
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
@@ -388,7 +393,9 @@ public class Materiales_Vista extends javax.swing.JFrame {
         AgregarMateriales registro = new AgregarMateriales();
         DefaultTableModel modelo = new DefaultTableModel();
         bd_Connection materialesBD = new bd_Connection();
-        
+        clear();
+        generalUnlock();
+               
         
         modelo = (DefaultTableModel)tblDatos.getModel();
         modelo.setRowCount(0);
@@ -417,15 +424,19 @@ public class Materiales_Vista extends javax.swing.JFrame {
         switch (selectedItem) {
             case "CD":
                 forCd();
+                spnCanciones.setEnabled(true);
                 break;
             case "DVD":
                 forDVD();
+                spnCanciones.setEnabled(false);
                 break;
             case "Revista":
                 forRevista();
+                spnCanciones.setEnabled(false);
                 break;
             case "Libro":
                 forLibro();
+                spnCanciones.setEnabled(false);
                 break;
                     
             default:
@@ -586,15 +597,15 @@ public class Materiales_Vista extends javax.swing.JFrame {
             Logger.getLogger(Materiales_Vista.class.getName()).log(Level.SEVERE, null, ex);
         }
         addRows(modelo,tblDatos, materiales);
+        clear();
     }//GEN-LAST:event_btnInsertarMouseClicked
     private void forCd(){
-                txtID.setEnabled(true);
-                txtTitulo.setEnabled(true);
+
                 txtAutor.setEnabled(true);
                 txtGenero.setEnabled(true);
                 txtDuracion.setEnabled(true);
-                spnCanciones.setEnabled(true);
                 spnCantidad.setEnabled(true);
+                spnCanciones.setEnabled(true);
                 txtEditorial.setEnabled(false);
                 txtPeriod.setEnabled(false);
                 txtISBN.setEnabled(false);
@@ -602,8 +613,7 @@ public class Materiales_Vista extends javax.swing.JFrame {
                 txtYear.setEnabled(false);
     }
     private void forDVD(){
-                txtID.setEnabled(true);
-                txtTitulo.setEnabled(true);
+
                 txtAutor.setEnabled(true);
                 txtGenero.setEnabled(true);
                 txtDuracion.setEnabled(true);
@@ -611,27 +621,22 @@ public class Materiales_Vista extends javax.swing.JFrame {
                 txtEditorial.setEnabled(false);
                 txtPeriod.setEnabled(false);
                 txtISBN.setEnabled(false);
-                spnCanciones.setEnabled(false);
+                
                 spnPags.setEnabled(false);
                 txtYear.setEnabled(false);
     }
     private void forRevista(){
-                txtID.setEnabled(true);
-                txtTitulo.setEnabled(true);
+                
                 txtEditorial.setEnabled(true);
                 txtYear.setEnabled(true);
-                txtPeriod.setEnabled(true);
                 spnCantidad.setEnabled(true);
-                txtISBN.setEnabled(false);
                 txtDuracion.setEnabled(false);
-                spnCanciones.setEnabled(false);
                 txtGenero.setEnabled(false);
-                spnPags.setEnabled(false);
-                txtAutor.setEnabled(false);
+
+                
     }
     private void forLibro(){
-                txtID.setEnabled(true);
-                txtTitulo.setEnabled(true);
+
                 txtAutor.setEnabled(true);
                 txtYear.setEnabled(true);
                 txtISBN.setEnabled(true);
@@ -640,14 +645,24 @@ public class Materiales_Vista extends javax.swing.JFrame {
                 txtEditorial.setEnabled(true);
                 txtPeriod.setEnabled(false);
                 txtDuracion.setEnabled(false);
-                spnCanciones.setEnabled(false);
                 txtGenero.setEnabled(false);
+                txtPeriod.setEnabled(false);
                 
     }
+    private void generalLock(){
+        txtID.setEnabled(false);
+        txtTitulo.setEnabled(false);
+    }
+    private void generalUnlock(){
+        txtID.setEnabled(true);
+        txtTitulo.setEnabled(true);
+    }
+
     private void tblDatosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDatosMouseClicked
         // TODO add your handling code here:
         int selectedRow = tblDatos.getSelectedRow();
         clear();
+        
         
         if (evt.getClickCount()==2&& selectedRow != -1) {
             String id = tblDatos.getValueAt(selectedRow, 0).toString();
@@ -657,6 +672,7 @@ public class Materiales_Vista extends javax.swing.JFrame {
             DefaultTableModel modelo = new DefaultTableModel();
             modelo = (DefaultTableModel)tblDatos.getModel();
             modelo.setRowCount(0);
+            generalLock();
        try {
             materiales = registro.buscarDato(materialesBD, id);
             if (!materiales.isEmpty()) {
@@ -665,8 +681,9 @@ public class Materiales_Vista extends javax.swing.JFrame {
                 switch (material.getTipo()) {
                         
                     case "CD":
-                        forCd();
+                        
                         if(material instanceof CD){
+                            forCd();
                             CD cd = (CD) material;
                             txtID.setText(cd.getId());
                             txtAutor.setText(cd.getArtist());
@@ -676,6 +693,8 @@ public class Materiales_Vista extends javax.swing.JFrame {
                             spnCanciones.setValue(cd.getCanciones());
                             spnCantidad.setValue(cd.getUnidades());
                             cmbTipo.setSelectedIndex(0);
+                            
+                            spnCanciones.setEnabled(true);
                         }
                     case "DVD":
                         forDVD();
@@ -687,25 +706,53 @@ public class Materiales_Vista extends javax.swing.JFrame {
                             txtGenero.setText(dvd.getGenero());
                             txtDuracion.setText(dvd.getDuracion().toString());
                             spnCantidad.setValue(dvd.getUnidades());
-                            cmbTipo.setSelectedIndex(1);   
+                            cmbTipo.setSelectedIndex(1);  
+                            
+                            spnCanciones.setEnabled(false);
                         }
                       
                         break;
+                    case "Revista":
+                    
+                    if (material instanceof Revista) {
+                            forRevista();
+
+                            Revista revista = (Revista) material;
+
+                            txtID.setText(revista.getId());
+                            txtTitulo.setText(revista.getTitulo());
+                            txtEditorial.setText(revista.getEditorial());
+                            txtPeriod.setText(revista.getPeriod());
+                            txtYear.setText(revista.getDate().toString());
+                            spnCantidad.setValue(revista.getUnidades());                            
+                            cmbTipo.setSelectedIndex(2);  
+                            
+                            txtISBN.setEnabled(false);
+                            txtAutor.setEnabled(false);
+                            txtISBN.setEnabled(false);
+                            txtPeriod.setEnabled(true);
+                            spnPags.setEnabled(false);
+                            spnCanciones.setEnabled(false);
+                            
+                            
+                        }
+                    break;
                     case "Libro":
-                    forRevista();
+                    forLibro();
                     if (material instanceof Libro) {
                             Libro Libro = (Libro) material;
 
                             txtID.setText(Libro.getId());
                             txtTitulo.setText(Libro.getTitulo());
-                            txtAutor.setText(Libro.getAutor());
                             txtEditorial.setText(Libro.getEditorial());
-                            txtISBN.setText(Libro.getISBN());
                             txtYear.setText(String.valueOf(Libro.getYear()));
-                            spnPags.setValue(Libro.getPags());
-                            spnCantidad.setValue(Libro.getUnidades());
-                            cmbTipo.setSelectedIndex(2);  
+                            txtISBN.setText(Libro.getISBN());
+                            spnPags.setValue(Libro.getPags());                            
+                            spnCantidad.setValue(Libro.getUnidades());                            
+                            cmbTipo.setSelectedIndex(3); 
                             
+                            txtAutor.setEnabled(false);
+                            spnCanciones.setEnabled(false);
                         }
                     break;
                     default:
@@ -724,6 +771,35 @@ public class Materiales_Vista extends javax.swing.JFrame {
             
         }
     }//GEN-LAST:event_tblDatosMouseClicked
+
+    private void btnEditarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEditarMouseClicked
+        // TODO add your handling code here:
+         AgregarMateriales registro = new AgregarMateriales();
+          bd_Connection materialesBD = new bd_Connection();
+          ArrayList<Material> materiales =new ArrayList<>();
+          DefaultTableModel modelo = new DefaultTableModel();
+          String selectedItem = (String) cmbTipo.getSelectedItem();
+
+          String titulo="";
+          String autor = "";
+          String genero = "";
+          String editorial = ""; 
+          String period = "";
+          Date fecha_publicacion;
+          int stock;
+          
+          switch (selectedItem) {
+            case "Revista":
+                editorial = txtEditorial.getText();
+                period = txtPeriod.getText();
+                fecha_publicacion = utilities.parseDate(txtYear.getText());
+                stock = Integer.parseInt( spnCantidad.getValue().toString());
+                registro.updateRevistas(editorial,period,fecha_publicacion, stock);
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }//GEN-LAST:event_btnEditarMouseClicked
 
     /**
      * @param args the command line arguments

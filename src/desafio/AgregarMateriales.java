@@ -727,7 +727,143 @@ public class AgregarMateriales {
             
             return listaMaterial;
         }
- 
+        public void updateRevistas(String editorial, String periodicidad, Date fecha_publicacion, int unidades_disp){
+        bd_Connection materialesBD = new bd_Connection();
+        PreparedStatement pStm = null;
+        
+        try{
+            String updatedQuery = "UPDATE revistas SET editorial=?, periodicidad=?, fecha_publicacion=?, unidades_disp=? WHERE idRevista=?";
+            pStm = materialesBD.getConnection().prepareStatement(updatedQuery);
+           
+            pStm.setString(3, editorial);
+            pStm.setString(4, periodicidad);
+            pStm.setDate(5, new java.sql.Date(fecha_publicacion.getTime()));
+            pStm.setInt(6,unidades_disp);
+            
+            pStm.executeUpdate();
+
+            JOptionPane.showMessageDialog(null, "Revista actualizada exitosamente", "Registro Exitoso", JOptionPane.INFORMATION_MESSAGE);
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+        }catch (ClassCastException e) {
+        JOptionPane.showMessageDialog(null, "Error de conversión de tipos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }finally{
+            try{
+                if (pStm != null) {
+                pStm.close();
+                }if (materialesBD.getConnection()!=null) {
+                materialesBD.getConnection().close();
+                }
+                }catch(SQLException e){
+                JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+                }
+                } 
+        
+    }
+        
+        public void updateLibros(String autor, int num_pags, String editorial, String ISBN, int anio_publicacion, int unidades_disp){
+        bd_Connection materialesBD = new bd_Connection();
+        PreparedStatement pStm = null;
+        
+        try{
+            String updatedQuery = "UPDATE libros SET autor=?, num_pags=?, editorial=?, ISBN=?, anio_publicacion=?,  anio_publicacion=? WHERE idLibros=?";
+            pStm = materialesBD.getConnection().prepareStatement(updatedQuery);
+           
+            pStm.setString(3, autor);
+            pStm.setInt(4, num_pags);
+            pStm.setString(5, editorial);
+            pStm.setString(6,ISBN);
+            pStm.setInt(7,unidades_disp);
+            pStm.setInt(8,unidades_disp);
+            
+            pStm.executeUpdate();
+
+            JOptionPane.showMessageDialog(null, "Tabla Libros actualizada exitosamente", "Registro Exitoso", JOptionPane.INFORMATION_MESSAGE);
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+        }catch (ClassCastException e) {
+        JOptionPane.showMessageDialog(null, "Error de conversión de tipos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }finally{
+            try{
+                if (pStm != null) {
+                pStm.close();
+                }if (materialesBD.getConnection()!=null) {
+                materialesBD.getConnection().close();
+                }
+                }catch(SQLException e){
+                JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+                }
+                } 
+        
+    }
+        public void updateCD(String artista, String genero, LocalTime duracion, int num_canciones, int unidades){
+        bd_Connection materialesBD = new bd_Connection();
+        PreparedStatement pStm = null;
+        
+        try{
+            String updatedQuery = "UPDATE libros SET autor=?, num_pags=?, editorial=?, ISBN=?, anio_publicacion=?,  anio_publicacion=? WHERE idCd=?";
+            pStm = materialesBD.getConnection().prepareStatement(updatedQuery);
+           
+            pStm.setString(3, artista);
+            pStm.setString(4, genero);
+            pStm.setTime(5, Time.valueOf(duracion));
+            pStm.setInt(6,num_canciones);
+            pStm.setInt(7,unidades);
+
+            
+            pStm.executeUpdate();
+
+            JOptionPane.showMessageDialog(null, "Tabla CD actualizada exitosamente", "Registro Exitoso", JOptionPane.INFORMATION_MESSAGE);
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+        }catch (ClassCastException e) {
+        JOptionPane.showMessageDialog(null, "Error de conversión de tipos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }finally{
+            try{
+                if (pStm != null) {
+                pStm.close();
+                }if (materialesBD.getConnection()!=null) {
+                materialesBD.getConnection().close();
+                }
+                }catch(SQLException e){
+                JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+                }
+                } 
+        
+    }
+    public void updateDVD(String director, String genero, LocalTime duracion,int unidades){
+        bd_Connection materialesBD = new bd_Connection();
+        PreparedStatement pStm = null;
+        
+        try{
+            String updatedQuery = "UPDATE libros SET autor=?, num_pags=?, editorial=?, ISBN=?, anio_publicacion=?,  anio_publicacion=? WHERE idCd=?";
+            pStm = materialesBD.getConnection().prepareStatement(updatedQuery);
+           
+            pStm.setString(3, director);
+            pStm.setTime(4, Time.valueOf(duracion));
+            pStm.setString(5, genero);       
+            pStm.setInt(6,unidades);
+
+            pStm.executeUpdate();
+
+            JOptionPane.showMessageDialog(null, "Tabla CD actualizada exitosamente", "Registro Exitoso", JOptionPane.INFORMATION_MESSAGE);
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+        }catch (ClassCastException e) {
+        JOptionPane.showMessageDialog(null, "Error de conversión de tipos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }finally{
+            try{
+                if (pStm != null) {
+                pStm.close();
+                }if (materialesBD.getConnection()!=null) {
+                materialesBD.getConnection().close();
+                }
+                }catch(SQLException e){
+                JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+                }
+                } 
+        
+    }
         
     
     
