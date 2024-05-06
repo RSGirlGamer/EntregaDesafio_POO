@@ -78,31 +78,6 @@ public class Main {
                     case 2:
 //                        frame.setVisible(false);
 //                        Modificar material
-                        String consulta = "SELECT * FROM materiales";
-                        ResultSet resultados = materialesBD.createQuery(consulta);
-                        try {
-                            while (resultados.next()) {
-                                String  idMateriales = resultados.getString("idMateriales");
-                                String  L2 = resultados.getString("L2");
-                                String  Tipo = resultados.getString("Tipo");
-                                String  Titulo = resultados.getString("Titulo");
-                                System.out.println("ID Material: "+idMateriales+" L2: "+L2+" Tipo: "+Tipo+" Titulo: "+Titulo);
-                            }
-                            
-                        }catch(SQLException e){
-                            JOptionPane.showMessageDialog(null, "Error al procesar los resultados: "+ e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
-                        }
-                        finally{
-                                    try{
-                                    if (resultados!= null) {
-                                    resultados.close();
-                                    }if (materialesBD.getConnection()!=null) {
-                                    materialesBD.getConnection().close();
-                                    }
-                                    }catch(SQLException e){
-                                    JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
-                                    }
-                                    }
                         break;
                     case 3:
                         if(frame.isVisible()){
@@ -138,7 +113,14 @@ public class Main {
                         registro.deleteDato(idMaterial);
                         break;
                     case 5:
-//                        Buscar Material
+                        String id;
+                        if(frame.isVisible()){
+                            frame.setVisible(false);                            
+                        }
+                        id = JOptionPane.showInputDialog("Ingrese el ID del material buscado");
+                        materiales = registro.buscarDato(materialesBD, id);
+                        frame = new MiTabla(materiales);
+                        frame.setVisible(true);
                         break;
                     case 6:
                         if (frame.isVisible()) {

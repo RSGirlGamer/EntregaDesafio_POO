@@ -34,6 +34,10 @@ public class DVD extends Material{
     public LocalTime getDuracion() {
         return duracion;
     }
+    public int getUnidades() {
+        return unidades;
+    }
+
 
     public String getGenero() {
         return genero;

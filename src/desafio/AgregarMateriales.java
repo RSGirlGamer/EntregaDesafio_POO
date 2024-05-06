@@ -166,41 +166,60 @@ public class AgregarMateriales {
 
         return resultado;
     }
-    public void getLibros(bd_Connection materialesBD){
-       String consultaLIB = "SELECT * FROM libros";
-       String tituloConsulta =""; 
+    public void getLibros(bd_Connection materialesBD,String id){
+       String consultaLIB = "";
+       if (id==null) {
+              consultaLIB = "SELECT * FROM libros";
+           }else {
+              consultaLIB = "SELECT * FROM libros WHERE idLibros = ?";
+           }
+       String tituloConsulta ="SELECT Titulo FROM materiales WHERE idMateriales=?"; 
        String b="Libro";
-       String titulo=""; 
-       ResultSet resultados = materialesBD.createQuery(consultaLIB);
+       String titulo="";
+       String  idLibros ="";
+       ResultSet resultados = null;
         try {
-             
-
-             while (resultados.next()) {
-                String  idLibros = resultados.getString("idLibros"); 
-                tituloConsulta ="SELECT Titulo FROM materiales WHERE idMateriales=?";  
-                try (PreparedStatement stmt = materialesBD.getConnection().prepareStatement(tituloConsulta)) {
-                stmt.setString(1,idLibros); 
-                ResultSet resAll = stmt.executeQuery();
-                    if (resAll.next()) {
-                        titulo = resAll.getString("Titulo");
-                    }
-                String  L2 = resultados.getString("L2");
-                String  autor = resultados.getString("autor");
-                int  num_pags = Integer.parseInt(resultados.getString("num_pags"));
-                String  editorial = resultados.getString("editorial");
-                String  ISBN = resultados.getString("ISBN");
-                int  anio_publicacion = Integer.parseInt(resultados.getString("anio_publicacion")); 
-                int  unidades_disp = Integer.parseInt(resultados.getString("unidades_disp")); 
-                listaMaterial.add(new Libro(autor,num_pags, editorial,ISBN, anio_publicacion, unidades_disp, L2, b, idLibros, titulo));    
-            }catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Error al procesar los resultados: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Error al convertir un número: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }               
+             if (id==null) {
+                resultados = materialesBD.createQuery(consultaLIB);
+                 while (resultados.next()) {
+                    idLibros = resultados.getString("idLibros");
+                    titulo = getTitulo(materialesBD,tituloConsulta,idLibros);
+                    String  L2 = resultados.getString("L2");
+                    String  autor = resultados.getString("autor");
+                    int  num_pags = Integer.parseInt(resultados.getString("num_pags"));
+                    String  editorial = resultados.getString("editorial");
+                    String  ISBN = resultados.getString("ISBN");
+                    int  anio_publicacion = Integer.parseInt(resultados.getString("anio_publicacion")); 
+                    int  unidades_disp = Integer.parseInt(resultados.getString("unidades_disp")); 
+                    listaMaterial.add(new Libro(autor,num_pags, editorial,ISBN, anio_publicacion, unidades_disp, L2, b, idLibros, titulo));     
+                 }
+                
+            }else{
+                 try(PreparedStatement stmtLib = materialesBD.getConnection().prepareStatement(consultaLIB)){
+                     stmtLib.setString(1, id);
+                     resultados= stmtLib.executeQuery();
+                     while(resultados.next()){
+                        idLibros = id;
+                        titulo = getTitulo(materialesBD,tituloConsulta,idLibros);
+                        String  L2 = resultados.getString("L2");
+                        String  autor = resultados.getString("autor");
+                        int  num_pags = Integer.parseInt(resultados.getString("num_pags"));
+                        String  editorial = resultados.getString("editorial");
+                        String  ISBN = resultados.getString("ISBN");
+                        int  anio_publicacion = Integer.parseInt(resultados.getString("anio_publicacion")); 
+                        int  unidades_disp = Integer.parseInt(resultados.getString("unidades_disp")); 
+                        listaMaterial.add(new Libro(autor,num_pags, editorial,ISBN, anio_publicacion, unidades_disp, L2, b, idLibros, titulo));  
+                         
+                     }
+                 }
+                 
+             }
+            
              }catch(SQLException e){
                 JOptionPane.showMessageDialog(null, "Error al procesar los resultados: "+ e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
-                }
+             }catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Error al convertir un número: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+             }
             finally{
                 try{
                     if (resultados!= null) {
@@ -214,37 +233,55 @@ public class AgregarMateriales {
                     }       
     }
     
-    public void getRevistas(bd_Connection materialesBD){
-       String consultaREV = "SELECT * FROM revistas";
-       String tituloConsulta =""; 
+    public void getRevistas(bd_Connection materialesBD, String id){
+       String consultaREV;
+          if (id==null) {
+              consultaREV = "SELECT * FROM revistas";
+           }else {
+              consultaREV = "SELECT * FROM revistas WHERE idRevistas = ?";
+           }
+       String titulo =""; 
        String r="Revista";
-       String titulo=""; 
-       ResultSet resultados = materialesBD.createQuery(consultaREV);
+       String  idRevistas ="";
+       String tituloConsulta="SELECT Titulo FROM materiales WHERE idMateriales=?"; 
+       ResultSet resultados =null; 
         try {
-                while (resultados.next()) {
-                String  idRevistas = resultados.getString("idRevistas"); 
-                tituloConsulta ="SELECT Titulo FROM materiales WHERE idMateriales=?";  
-                try (PreparedStatement stmt = materialesBD.getConnection().prepareStatement(tituloConsulta)) {
-                stmt.setString(1,idRevistas); 
-                ResultSet resAll = stmt.executeQuery();
-                    if (resAll.next()) {
-                        titulo = resAll.getString("Titulo");
+            if (id== null) {
+                resultados = materialesBD.createQuery(consultaREV); 
+
+                while(resultados.next()){
+                    idRevistas = resultados.getString("idRevistas"); 
+                    titulo = getTitulo(materialesBD,tituloConsulta,idRevistas);
+                    String  L2 = resultados.getString("L2");
+                    String  editorial = resultados.getString("editorial");
+                    int  unidades = Integer.parseInt(resultados.getString("unidades"));
+                    String  peridocidad = resultados.getString("peridocidad");
+                    Date fecha_publicacion = resultados.getDate("fecha_publicacion");
+                    listaMaterial.add(new Revista(editorial, peridocidad, fecha_publicacion,unidades,L2,r,idRevistas,titulo)); 
+                }
+            }else{
+                try(PreparedStatement stmtRev = materialesBD.getConnection().prepareStatement(consultaREV)){
+                   stmtRev.setString(1,id);
+                   resultados = stmtRev.executeQuery();
+                    while (resultados.next()) {
+                        idRevistas = id;
+                        titulo = getTitulo(materialesBD,tituloConsulta,idRevistas);
+                        String  L2 = resultados.getString("L2");
+                        String  editorial = resultados.getString("editorial");
+                        int  unidades = Integer.parseInt(resultados.getString("unidades"));
+                        String  peridocidad = resultados.getString("peridocidad");
+                        Date fecha_publicacion = resultados.getDate("fecha_publicacion");
+                        listaMaterial.add(new Revista(editorial, peridocidad, fecha_publicacion,unidades,L2,r,idRevistas,titulo));  
                     }
-                String  L2 = resultados.getString("L2");
-                String  editorial = resultados.getString("editorial");
-                int  unidades = Integer.parseInt(resultados.getString("unidades"));
-                String  peridocidad = resultados.getString("peridocidad");
-                Date fecha_publicacion = resultados.getDate("fecha_publicacion");
-                listaMaterial.add(new Revista(editorial, peridocidad, fecha_publicacion,unidades,L2,r,idRevistas,titulo)); 
-            }catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Error al procesar los resultados: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Error al convertir un número: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }               
+                    
+                }
+                
+            }             
              }catch(SQLException e){
                 JOptionPane.showMessageDialog(null, "Error al procesar los resultados: "+ e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
-                }
+                }catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Error al convertir un número: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
             finally{
                 try{
                     if (resultados!= null) {
@@ -257,22 +294,25 @@ public class AgregarMateriales {
                     }
                     }       
     }
-    public void getCD(bd_Connection materialesBD){
-       String consultaCD = "SELECT * FROM cds";
-       String tituloConsulta =""; 
+    public void getCD(bd_Connection materialesBD, String id) throws SQLException{
+        String consultaCD ;
+           if (id==null) {
+              consultaCD = "SELECT * FROM cds";
+           }else {
+              consultaCD = "SELECT * FROM cds WHERE idCd = ?";
+           }
+       String tituloConsulta ="SELECT Titulo FROM materiales WHERE idMateriales=?"; 
        String c="CD";
        String titulo=""; 
-       ResultSet resultados = materialesBD.createQuery(consultaCD);
+       String idCd ="";
+       ResultSet resultados = null; 
+       
         try {
-                while (resultados.next()) {
-                String  idCd = resultados.getString("idCd"); 
-                tituloConsulta ="SELECT Titulo FROM materiales WHERE idMateriales=?";  
-                try (PreparedStatement stmt = materialesBD.getConnection().prepareStatement(tituloConsulta)) {
-                stmt.setString(1,idCd); 
-                ResultSet resAll = stmt.executeQuery();
-                    if (resAll.next()) {
-                        titulo = resAll.getString("Titulo");
-                    }
+            if (id==null) {
+                resultados = materialesBD.createQuery(consultaCD);
+            while (resultados.next()) {
+                idCd = resultados.getString("idCd");
+                titulo = getTitulo(materialesBD,tituloConsulta,idCd);
                 String  L2 = resultados.getString("L2");
                 String  artista = resultados.getString("artista");
                 int  num_canciones = Integer.parseInt(resultados.getString("num_canciones"));
@@ -282,15 +322,50 @@ public class AgregarMateriales {
                 LocalTime duracion = utilDate.toInstant().atOffset(ZoneOffset.UTC).toLocalTime();
                 int unidades = resultados.getInt("unidades");
                 listaMaterial.add(new CD(artista, genero, duracion, num_canciones, unidades, L2, c, idCd, titulo));
-            }catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Error al procesar los resultados: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Error al convertir un número: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }               
-             }catch(SQLException e){
-                JOptionPane.showMessageDialog(null, "Error al procesar los resultados: "+ e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+                    
+            }
+                
+            }else{
+                
+                try(PreparedStatement stmtCd = materialesBD.getConnection().prepareStatement(consultaCD)){
+                   stmtCd.setString(1,id);
+
+                   resultados = stmtCd.executeQuery();
+
+                    while(resultados.next()){
+
+                    if (id ==null) {
+                          idCd = resultados.getString("idDvd");
+
+                    }else {
+                        idCd = id;
+
+                    } 
+                    titulo = getTitulo(materialesBD,tituloConsulta,idCd);
+
+                    idCd = id;
+                    titulo = getTitulo(materialesBD,tituloConsulta,idCd);
+
+                    String  L2 = resultados.getString("L2");
+
+                    String  artista = resultados.getString("artista");
+;
+                    int  num_canciones = Integer.parseInt(resultados.getString("num_canciones"));
+                    String  genero = resultados.getString("genero");
+                    Time duracionSQL = resultados.getTime("duracion");
+                    Date utilDate = new Date(duracionSQL.getTime());
+                    LocalTime duracion = utilDate.toInstant().atOffset(ZoneOffset.UTC).toLocalTime();
+                    int unidades = resultados.getInt("unidades");
+                    listaMaterial.add(new CD(artista, genero, duracion, num_canciones, unidades, L2, c, idCd, titulo));
                 }
+                }
+            }
+             
+            }catch(SQLException e){
+                JOptionPane.showMessageDialog(null, "Error al procesar los resultados: "+ e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+            }catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Error al convertir un número: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
             finally{
                 try{
                     if (resultados!= null) {
@@ -303,22 +378,41 @@ public class AgregarMateriales {
                     }
                     }       
     }
-        public void getDVD(bd_Connection materialesBD){
-       String consultaDVD = "SELECT * FROM dvds";
-       String tituloConsulta =""; 
+    
+    private String getTitulo(bd_Connection materialesBD, String consulta, String id) throws SQLException{
+        String titulo="";
+        try (PreparedStatement stmt = materialesBD.getConnection().prepareStatement(consulta)){
+            stmt.setString(1, id);
+            try (ResultSet resAll = stmt.executeQuery()){
+                if (resAll.next()) {
+                    titulo = resAll.getString("Titulo");
+
+                    resAll.close();
+                }
+            }
+            
+        }
+        return titulo;
+    } 
+       public void getDVD(bd_Connection materialesBD,String id){
+           String consultaDVD ;
+           if (id==null) {
+              consultaDVD = "SELECT * FROM dvds";
+           }else {
+              consultaDVD = "SELECT * FROM dvds WHERE idDvd = ?";
+           }
+       String tituloConsulta ="SELECT Titulo FROM materiales WHERE idMateriales=?"; 
        String d="DVD";
        String titulo=""; 
-       ResultSet resultados = materialesBD.createQuery(consultaDVD);
+       String idDvd ="";
+       ResultSet resultados = null; 
         try {
-                while (resultados.next()) {
-                String  idDvd = resultados.getString("idDvd"); 
-                tituloConsulta ="SELECT Titulo FROM materiales WHERE idMateriales=?";  
-                try (PreparedStatement stmt = materialesBD.getConnection().prepareStatement(tituloConsulta)) {
-                stmt.setString(1,idDvd); 
-                ResultSet resAll = stmt.executeQuery();
-                    if (resAll.next()) {
-                        titulo = resAll.getString("Titulo");
-                    }
+            if (id == null){
+            resultados = materialesBD.createQuery(consultaDVD);  
+            while(resultados.next()){
+
+                idDvd = resultados.getString("idDvd");
+                titulo = getTitulo(materialesBD,tituloConsulta,idDvd);
                 String  L2 = resultados.getString("L2");
                 String  director = resultados.getString("director");
                 String  genero = resultados.getString("genero");
@@ -327,15 +421,42 @@ public class AgregarMateriales {
                 LocalTime duracion = utilDate.toInstant().atOffset(ZoneOffset.UTC).toLocalTime();
                 int unidades_disp = resultados.getInt("unidades_disp");
                 listaMaterial.add(new DVD(director, duracion, genero,unidades_disp, L2, d, idDvd, titulo));
-            }catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Error al procesar los resultados: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (NumberFormatException e) {
+                    }
+            }else{
+
+                try(PreparedStatement stmtDvd = materialesBD.getConnection().prepareStatement(consultaDVD)){
+                   stmtDvd.setString(1,id);
+
+                   resultados = stmtDvd.executeQuery();
+
+                    while(resultados.next()){
+
+                    if (id ==null) {
+                          idDvd = resultados.getString("idDvd");
+
+                    }else {
+                        idDvd = id;
+
+                    } 
+                    titulo = getTitulo(materialesBD,tituloConsulta,idDvd);
+
+                String  L2 = resultados.getString("L2");
+                String  director = resultados.getString("director");
+                String  genero = resultados.getString("genero");
+                Time duracionSQL = resultados.getTime("duracion");
+                Date utilDate = new Date(duracionSQL.getTime());
+                LocalTime duracion = utilDate.toInstant().atOffset(ZoneOffset.UTC).toLocalTime();
+                int unidades_disp = resultados.getInt("unidades_disp");
+                listaMaterial.add(new DVD(director, duracion, genero,unidades_disp, L2, d, idDvd, titulo));
+                    }
+                }
+                
+            }           
+            }catch(SQLException e){
+                JOptionPane.showMessageDialog(null, "Error al procesar los resultados: "+ e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+            }catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "Error al convertir un número: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                }               
-             }catch(SQLException e){
-                JOptionPane.showMessageDialog(null, "Error al procesar los resultados: "+ e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
-                }
             finally{
                 try{
                     if (resultados!= null) {
@@ -348,13 +469,14 @@ public class AgregarMateriales {
                     }
                     }       
     }
-    public ArrayList<Material> fromBD(bd_Connection materialesBD){
+       
+    public ArrayList<Material> fromBD(bd_Connection materialesBD) throws SQLException{
 //        String consulta = "SELECT * FROM materiales";
         listaMaterial.clear();
-        getLibros(materialesBD);
-        getRevistas(materialesBD);
-        getCD(materialesBD);
-        getDVD(materialesBD);
+        getLibros(materialesBD,null);
+        getRevistas(materialesBD,null);
+        getCD(materialesBD,null);
+        getDVD(materialesBD,null);
         
         return listaMaterial;
     }
@@ -549,18 +671,24 @@ public class AgregarMateriales {
             
             pStmTable = materialesBD.getConnection().prepareStatement(consulta);
             pStmTable.setString(1, idMaterial);
+            System.out.println(idMaterial);
             
             ResultSet resultado =pStmTable.executeQuery();
 
             if (resultado.next()) {
+                System.out.println(resultado.getString("Tipo").getClass());
                 String comparison =resultado.getString("Tipo");
+                System.out.println(comparison);
                 String material = comparison.toLowerCase()+"s";
+                System.out.println(material);
                 String forQuery;
-                
-                if (comparison == "CD" || comparison == "DVD" ) {
+
+                if (comparison.equals("CD") || comparison.equals("DVD") ) {
                     forQuery ="id"+comparison;
+                    System.out.println(forQuery);    
                 }else{
                     forQuery ="id"+material;
+                    System.out.println(forQuery);
                 }
                 
                 PreparedStatement pStmDelete = materialesBD.getConnection().prepareStatement("DELETE FROM " + material + " WHERE " +forQuery+" = ?");
@@ -587,8 +715,18 @@ public class AgregarMateriales {
         }
    
         }                
-            
+  
         } 
+        
+        public ArrayList<Material>  buscarDato(bd_Connection materialesBD,String id) throws SQLException{
+            listaMaterial.clear();
+            getLibros(materialesBD,id);
+            getRevistas(materialesBD,id);
+            getDVD(materialesBD,id);
+            getCD(materialesBD,id);
+            
+            return listaMaterial;
+        }
  
         
     
