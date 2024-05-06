@@ -464,6 +464,7 @@ public class Materiales_Vista extends javax.swing.JFrame {
     private void btnDeleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeleteMouseClicked
         // TODO add your handling code here:
         int selectedRow = tblDatos.getSelectedRow();
+        generalUnlock();
         AgregarMateriales registro = new AgregarMateriales();
         DefaultTableModel modelo = new DefaultTableModel();
         bd_Connection materialesBD = new bd_Connection();
@@ -629,7 +630,9 @@ public class Materiales_Vista extends javax.swing.JFrame {
                 
                 txtEditorial.setEnabled(true);
                 txtYear.setEnabled(true);
+                txtPeriod.setEnabled(true);
                 spnCantidad.setEnabled(true);
+                txtAutor.setEnabled(false);
                 txtDuracion.setEnabled(false);
                 txtGenero.setEnabled(false);
 
@@ -723,9 +726,9 @@ public class Materiales_Vista extends javax.swing.JFrame {
                             txtTitulo.setText(revista.getTitulo());
                             txtEditorial.setText(revista.getEditorial());
                             txtPeriod.setText(revista.getPeriod());
-                            txtYear.setText(revista.getDate().toString());
+                            txtYear.setText(utilities.parseDateSQL(revista.getDate().toString()));
                             spnCantidad.setValue(revista.getUnidades());                            
-                            cmbTipo.setSelectedIndex(2);  
+                            cmbTipo.setSelectedIndex(3);  
                             
                             txtISBN.setEnabled(false);
                             txtAutor.setEnabled(false);
@@ -749,7 +752,7 @@ public class Materiales_Vista extends javax.swing.JFrame {
                             txtISBN.setText(Libro.getISBN());
                             spnPags.setValue(Libro.getPags());                            
                             spnCantidad.setValue(Libro.getUnidades());                            
-                            cmbTipo.setSelectedIndex(3); 
+                            cmbTipo.setSelectedIndex(2); 
                             
                             txtAutor.setEnabled(false);
                             spnCanciones.setEnabled(false);
@@ -771,34 +774,96 @@ public class Materiales_Vista extends javax.swing.JFrame {
             
         }
     }//GEN-LAST:event_tblDatosMouseClicked
-
+    private ArrayList<Material> llenar(AgregarMateriales registro,bd_Connection materialesBD, ArrayList<Material> materiales){
+        try {
+            materiales = registro.fromBD(materialesBD);
+        } catch (SQLException ex) {
+            Logger.getLogger(Materiales_Vista.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return materiales;
+    }
     private void btnEditarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEditarMouseClicked
         // TODO add your handling code here:
          AgregarMateriales registro = new AgregarMateriales();
-          bd_Connection materialesBD = new bd_Connection();
           ArrayList<Material> materiales =new ArrayList<>();
           DefaultTableModel modelo = new DefaultTableModel();
+          bd_Connection materialesBD = new bd_Connection();
           String selectedItem = (String) cmbTipo.getSelectedItem();
 
-          String titulo="";
           String autor = "";
+          String id = "";
           String genero = "";
           String editorial = ""; 
+          int anio_publicacion; 
+          LocalTime duracion;
           String period = "";
+          String ISBN="";
           Date fecha_publicacion;
-          int stock;
+          int stock, num_canciones, num_pags;
+          
           
           switch (selectedItem) {
             case "Revista":
+                cmbTipo.setSelectedIndex(3);
+                id = txtID.getText();
                 editorial = txtEditorial.getText();
                 period = txtPeriod.getText();
                 fecha_publicacion = utilities.parseDate(txtYear.getText());
                 stock = Integer.parseInt( spnCantidad.getValue().toString());
-                registro.updateRevistas(editorial,period,fecha_publicacion, stock);
+                registro.updateRevistas(id,editorial,period,fecha_publicacion, stock);
+                
                 break;
+            case "Libro":
+                cmbTipo.setSelectedIndex(2);
+                id = txtID.getText();
+                autor = txtAutor.getText();
+                period = txtPeriod.getText();
+                anio_publicacion = Integer.parseInt(txtYear.getText());
+                num_pags = Integer.parseInt( spnPags.getValue().toString());
+                editorial = txtEditorial.getText();
+                ISBN = txtISBN.getText();
+                stock = Integer.parseInt( spnCantidad.getValue().toString());
+                registro.updateLibros(id,autor, num_pags, editorial, ISBN,anio_publicacion, stock);
+            break;
+            case "CD":
+                cmbTipo.setSelectedIndex(0);
+                id = txtID.getText();
+                autor = txtAutor.getText();
+                genero = txtGenero.getText();
+                period = txtPeriod.getText();
+                anio_publicacion = Integer.parseInt(txtYear.getText());
+                duracion = utilities.parseDuracion(txtDuracion.getText());
+                num_pags = Integer.parseInt( spnPags.getValue().toString());
+                editorial = txtEditorial.getText();
+                ISBN = txtISBN.getText();
+                num_canciones = Integer.parseInt( spnCanciones.getValue().toString());
+                stock = Integer.parseInt( spnCantidad.getValue().toString());
+                registro.updateCD(id,autor, genero, duracion, num_canciones,stock);
+            break;
+            case "DVD":
+                cmbTipo.setSelectedIndex(1);
+                id = txtID.getText();
+                autor = txtAutor.getText();
+                genero = txtGenero.getText();
+                period = txtPeriod.getText();
+                anio_publicacion = Integer.parseInt(txtYear.getText());
+                duracion = utilities.parseDuracion(txtDuracion.getText());
+                num_pags = Integer.parseInt( spnPags.getValue().toString());
+                editorial = txtEditorial.getText();
+                ISBN = txtISBN.getText();
+                num_canciones = Integer.parseInt( spnCanciones.getValue().toString());
+                stock = Integer.parseInt( spnCantidad.getValue().toString());
+                registro.updateDVD(id,autor, genero, duracion,stock);
+            break;
             default:
                 throw new AssertionError();
         }
+          
+          modelo = (DefaultTableModel)tblDatos.getModel();
+          modelo.setRowCount(0);
+          
+          addRows(modelo,tblDatos, llenar(registro,materialesBD,materiales));
+          
     }//GEN-LAST:event_btnEditarMouseClicked
 
     /**

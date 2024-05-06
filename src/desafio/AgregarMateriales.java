@@ -727,18 +727,19 @@ public class AgregarMateriales {
             
             return listaMaterial;
         }
-        public void updateRevistas(String editorial, String periodicidad, Date fecha_publicacion, int unidades_disp){
+        public void updateRevistas(String id,String editorial, String periodicidad, Date fecha_publicacion, int unidades_disp){
         bd_Connection materialesBD = new bd_Connection();
         PreparedStatement pStm = null;
         
         try{
-            String updatedQuery = "UPDATE revistas SET editorial=?, periodicidad=?, fecha_publicacion=?, unidades_disp=? WHERE idRevista=?";
+            String updatedQuery = "UPDATE revistas SET editorial=?, peridocidad=?, fecha_publicacion=?, unidades=? WHERE idRevistas=?";
             pStm = materialesBD.getConnection().prepareStatement(updatedQuery);
            
-            pStm.setString(3, editorial);
-            pStm.setString(4, periodicidad);
-            pStm.setDate(5, new java.sql.Date(fecha_publicacion.getTime()));
-            pStm.setInt(6,unidades_disp);
+            pStm.setString(1, editorial);
+            pStm.setString(2, periodicidad);
+            pStm.setDate(3, new java.sql.Date(fecha_publicacion.getTime()));
+            pStm.setInt(4,unidades_disp);
+            pStm.setString(5,id);
             
             pStm.executeUpdate();
 
@@ -761,7 +762,7 @@ public class AgregarMateriales {
         
     }
         
-        public void updateLibros(String autor, int num_pags, String editorial, String ISBN, int anio_publicacion, int unidades_disp){
+        public void updateLibros(String id,String autor, int num_pags, String editorial, String ISBN, int anio_publicacion, int unidades_disp){
         bd_Connection materialesBD = new bd_Connection();
         PreparedStatement pStm = null;
         
@@ -769,12 +770,13 @@ public class AgregarMateriales {
             String updatedQuery = "UPDATE libros SET autor=?, num_pags=?, editorial=?, ISBN=?, anio_publicacion=?,  anio_publicacion=? WHERE idLibros=?";
             pStm = materialesBD.getConnection().prepareStatement(updatedQuery);
            
-            pStm.setString(3, autor);
-            pStm.setInt(4, num_pags);
-            pStm.setString(5, editorial);
-            pStm.setString(6,ISBN);
-            pStm.setInt(7,unidades_disp);
-            pStm.setInt(8,unidades_disp);
+            pStm.setString(1, autor);
+            pStm.setInt(2, num_pags);
+            pStm.setString(3, editorial);
+            pStm.setString(4,ISBN);
+            pStm.setInt(5,unidades_disp);
+            pStm.setInt(6,unidades_disp);
+            pStm.setString(7, id);
             
             pStm.executeUpdate();
 
@@ -796,7 +798,7 @@ public class AgregarMateriales {
                 } 
         
     }
-        public void updateCD(String artista, String genero, LocalTime duracion, int num_canciones, int unidades){
+        public void updateCD(String id,String artista, String genero, LocalTime duracion, int num_canciones, int unidades){
         bd_Connection materialesBD = new bd_Connection();
         PreparedStatement pStm = null;
         
@@ -804,11 +806,12 @@ public class AgregarMateriales {
             String updatedQuery = "UPDATE libros SET autor=?, num_pags=?, editorial=?, ISBN=?, anio_publicacion=?,  anio_publicacion=? WHERE idCd=?";
             pStm = materialesBD.getConnection().prepareStatement(updatedQuery);
            
-            pStm.setString(3, artista);
-            pStm.setString(4, genero);
-            pStm.setTime(5, Time.valueOf(duracion));
-            pStm.setInt(6,num_canciones);
-            pStm.setInt(7,unidades);
+            pStm.setString(1, artista);
+            pStm.setString(2, genero);
+            pStm.setTime(3, Time.valueOf(duracion));
+            pStm.setInt(4,num_canciones);
+            pStm.setInt(5,unidades);
+            pStm.setString(6, id);
 
             
             pStm.executeUpdate();
@@ -831,18 +834,19 @@ public class AgregarMateriales {
                 } 
         
     }
-    public void updateDVD(String director, String genero, LocalTime duracion,int unidades){
+    public void updateDVD(String id,String director, String genero, LocalTime duracion,int unidades){
         bd_Connection materialesBD = new bd_Connection();
         PreparedStatement pStm = null;
         
         try{
-            String updatedQuery = "UPDATE libros SET autor=?, num_pags=?, editorial=?, ISBN=?, anio_publicacion=?,  anio_publicacion=? WHERE idCd=?";
+            String updatedQuery = "UPDATE libros SET autor=?, editorial=?, ISBN=?, anio_publicacion=?,  anio_publicacion=? WHERE idDvd=?";
             pStm = materialesBD.getConnection().prepareStatement(updatedQuery);
            
-            pStm.setString(3, director);
-            pStm.setTime(4, Time.valueOf(duracion));
-            pStm.setString(5, genero);       
-            pStm.setInt(6,unidades);
+            pStm.setString(1, director);
+            pStm.setTime(2, Time.valueOf(duracion));
+            pStm.setString(3, genero);       
+            pStm.setInt(4,unidades);
+            pStm.setString(5, id);
 
             pStm.executeUpdate();
 

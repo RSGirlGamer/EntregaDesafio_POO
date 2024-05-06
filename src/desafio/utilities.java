@@ -48,4 +48,20 @@ public class utilities {
          }
          return date;
      }
+     public static String parseDateSQL(String dateStr) {
+    SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
+    Date date = null;
+    String formattedDateStr = null;
+
+    try {
+        date = inputFormat.parse(dateStr);
+        formattedDateStr = outputFormat.format(date);
+    } catch (ParseException e) {
+        // Manejar el error de formato de fecha aquí
+        JOptionPane.showMessageDialog(null, "Fecha ingresada incorrectamente", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    return formattedDateStr;
+}
 }
